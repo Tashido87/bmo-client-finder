@@ -16,15 +16,15 @@ async function loadClientData() {
             throw new Error("No data found in the specified range");
         }
         const clientData = rows.slice(1).map(row => ({
-            date: row[0],       // Column A for date
-            regCode: row[1],    // Column B for reg code
-            risk: row[2],       // Column C for risk
-            name: row[3],       // Column D for name
-            fatherName: row[4], // Column E for father's name
-            age: row[5],        // Column F for age
-            gender: row[6],     // Column G for gender
-            phoneNo: row[7],    // Column H for phone number
-            address: row[8]     // Column I for address
+            date: row[0] || '',       // Column A for date
+            regCode: row[1] || '',    // Column B for reg code
+            risk: row[2] || '',       // Column C for risk
+            name: row[3] || '',       // Column D for name
+            fatherName: row[4] || '', // Column E for father's name
+            age: row[5] || '',        // Column F for age
+            gender: row[6] || '',     // Column G for gender
+            phoneNo: row[7] || '',    // Column H for phone number
+            address: row[8] || ''     // Column I for address
         }));
         console.log("Processed client data:", clientData); // Debugging: Log processed client data
         return clientData;
@@ -43,15 +43,18 @@ loadClientData().then(data => {
 });
 
 function searchClient() {
-    const searchInput = document.getElementById('search-input').value.trim();
+    const searchInput = document.getElementById('search-input').value.trim().toLowerCase();
     const resultsContainer = document.getElementById('results');
     resultsContainer.innerHTML = '';
 
     console.log("Search input:", searchInput); // Debugging: Log search input
 
     if (searchInput) {
-        const results = CLIENT_DATA.filter(client => client.name === searchInput)
-                                   .sort((a, b) => new Date(a.date) - new Date(b.date));
+        const results = CLIENT_DATA.filter(client => 
+            client.name.toLowerCase().includes(searchInput) ||
+            client.regCode.toLowerCase().includes(searchInput) ||
+            client.fatherName.toLowerCase().includes(searchInput)
+        ).sort((a, b) => new Date(a.date) - new Date(b.date));
 
         console.log("Search results:", results); // Debugging: Log search results
 
@@ -86,6 +89,6 @@ function searchClient() {
             resultsContainer.innerHTML = '<p>No results found</p>';
         }
     } else {
-        resultsContainer.innerHTML = '<p>Please enter a client name</p>';
+        resultsContainer.innerHTML = '<p>Please enter a client name, reg code, or father\'s name</p>';
     }
 }
