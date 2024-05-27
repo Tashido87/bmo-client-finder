@@ -1,8 +1,7 @@
 const SHEET_ID = '1n29YN1v7NIfxXxKOt-Z9KcrKNhW4arRIfk4FQ95gszY';
 const API_KEY = 'AIzaSyA8yYBkrljsFSdswq9T7cdAyq_hqC5nxbY';
-const RANGE = 'Bhamo KPSC Client List!A:I'; // Adjusted the range as per your sheet's data range
+const RANGE = 'Bhamo KPSC Client List!A:I';
 
-// Function to load data from Google Sheets
 async function loadClientData() {
     try {
         const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`);
@@ -10,23 +9,23 @@ async function loadClientData() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("Fetched data:", data); // Debugging: Log fetched data
+        console.log("Fetched data:", data);
         const rows = data.values;
         if (!rows) {
             throw new Error("No data found in the specified range");
         }
         const clientData = rows.slice(1).map(row => ({
-            date: row[0] || '',       // Column A for date
-            regCode: row[1] || '',    // Column B for reg code
-            risk: row[2] || '',       // Column C for risk
-            name: row[3] || '',       // Column D for name
-            fatherName: row[4] || '', // Column E for father's name
-            age: row[5] || '',        // Column F for age
-            gender: row[6] || '',     // Column G for gender
-            phoneNo: row[7] || '',    // Column H for phone number
-            address: row[8] || ''     // Column I for address
+            date: row[0] || '',
+            regCode: row[1] || '',
+            risk: row[2] || '',
+            name: row[3] || '',
+            fatherName: row[4] || '',
+            age: row[5] || '',
+            gender: row[6] || '',
+            phoneNo: row[7] || '',
+            address: row[8] || ''
         }));
-        console.log("Processed client data:", clientData); // Debugging: Log processed client data
+        console.log("Processed client data:", clientData);
         return clientData;
     } catch (error) {
         console.error("Error fetching data from Google Sheets:", error);
@@ -36,7 +35,6 @@ async function loadClientData() {
 
 let CLIENT_DATA = [];
 
-// Fetch data and initialize CLIENT_DATA
 loadClientData().then(data => {
     CLIENT_DATA = data;
     console.log("Client data initialized:", CLIENT_DATA);
@@ -47,7 +45,7 @@ function searchClient() {
     const resultsContainer = document.getElementById('results');
     resultsContainer.innerHTML = '';
 
-    console.log("Search input:", searchInput); // Debugging: Log search input
+    console.log("Search input:", searchInput);
 
     if (searchInput) {
         const results = CLIENT_DATA.filter(client => 
@@ -56,7 +54,7 @@ function searchClient() {
             client.fatherName.toLowerCase().includes(searchInput)
         ).sort((a, b) => new Date(a.date) - new Date(b.date));
 
-        console.log("Search results:", results); // Debugging: Log search results
+        console.log("Search results:", results);
 
         if (results.length > 0) {
             const table = document.createElement('table');
@@ -92,3 +90,10 @@ function searchClient() {
         resultsContainer.innerHTML = '<p>Please enter a client name, reg code, or father\'s name</p>';
     }
 }
+
+// Add an event listener to the search input to trigger searchClient on Enter key press
+document.getElementById('search-input').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        searchClient();
+    }
+});
