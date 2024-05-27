@@ -6,6 +6,9 @@
     <title>Bhamo KPSC Client Finder</title>
     <link rel="stylesheet" href="client finder.css">
     <link rel="icon" href="favicon.ico">
+    <meta name="description" content="Find clients by name, registration code, or father's name using Bhamo KPSC Client Finder.">
+    <meta name="author" content="Your Name">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://sheets.googleapis.com; style-src 'self';">
 </head>
 <body>
     <div class="container">
@@ -14,7 +17,7 @@
         </header>
         <main>
             <div class="search-box">
-                <input type="text" id="search-input" placeholder="Enter client's name, reg code, or father's name">
+                <input type="text" id="search-input" placeholder="Enter client name, reg code, or father's name">
                 <button id="search-button" onclick="searchClient()">Find it now</button>
             </div>
             <div id="results"></div>
