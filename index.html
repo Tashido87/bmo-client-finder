@@ -8,21 +8,19 @@
 </head>
 <body>
     <div class="container">
-        <header>
+        <div class="search-box">
             <h1>🔍 Bhamo KPSC Client Finder</h1>
-        </header>
-        <main>
             <div class="search-container">
                 <div class="search-row">
-                    <div class="search-box">
+                    <div class="search-input">
                         <label for="reg-code-input">Reg. Code</label>
                         <input type="text" id="reg-code-input" placeholder="Enter registration code">
                     </div>
-                    <div class="search-box">
+                    <div class="search-input">
                         <label for="client-name-input">Client Name</label>
                         <input type="text" id="client-name-input" placeholder="Enter client name">
                     </div>
-                    <div class="search-box">
+                    <div class="search-input">
                         <label for="father-name-input">Father's Name</label>
                         <input type="text" id="father-name-input" placeholder="Enter father's name">
                     </div>
@@ -32,13 +30,19 @@
                     <button id="clear-button">✖ Clear</button>
                 </div>
             </div>
-            <div id="loading" class="loading hidden">
-                <div class="spinner"></div>
-                <p>Loading results...</p>
-            </div>
-            <div id="results"></div>
-        </main>
+        </div>
+
+        <div id="results" class="results-container"></div>
+
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+        </div>
     </div>
+
+    <footer>
+        <p>© 2024 Bhamo KPSC. Created by Dr. Aung Pyae Sone</p>
+    </footer>
+
     <script src="client finder.js"></script>
 </body>
 </html>
