@@ -39,25 +39,30 @@ async function loadClientData() {
 }
 
 function searchClient() {
-    const searchInput = document.getElementById('search-input').value.trim().toLowerCase();
+    const regCodeInput = document.getElementById('reg-code-input').value.trim().toLowerCase();
+    const clientNameInput = document.getElementById('client-name-input').value.trim().toLowerCase();
+    const fatherNameInput = document.getElementById('father-name-input').value.trim().toLowerCase();
     const resultsContainer = document.getElementById('results');
     const loadingElement = document.getElementById('loading');
 
     resultsContainer.innerHTML = '';
     
-    if (searchInput) {
+    if (regCodeInput || clientNameInput || fatherNameInput) {
         loadingElement.classList.remove('hidden');
 
         setTimeout(() => {
-            const results = CLIENT_DATA.filter(client => 
-                client.name.toLowerCase().includes(searchInput) ||
-                client.regCode.toLowerCase().includes(searchInput) ||
-                client.fatherName.toLowerCase().includes(searchInput)
-            ).sort((a, b) => new Date(a.date) - new Date(b.date)); // Changed sorting order
+            const results = CLIENT_DATA.filter(client => {
+                const regCodeMatch = regCodeInput && client.regCode.toLowerCase().includes(regCodeInput);
+                const nameMatch = clientNameInput && client.name.toLowerCase().includes(clientNameInput);
+                const fatherNameMatch = fatherNameInput && client.fatherName.toLowerCase().includes(fatherNameInput);
+                
+                return (regCodeInput ? regCodeMatch : true) &&
+                       (clientNameInput ? nameMatch : true) &&
+                       (fatherNameInput ? fatherNameMatch : true);
+            }).sort((a, b) => new Date(b.date) - new Date(a.date));
 
             if (results.length > 0) {
                 const table = document.createElement('table');
-                table.classList.add('glass-effect');
                 table.innerHTML = `<tr>
                     <th>Date</th>
                     <th>Reg. Code</th>
@@ -69,7 +74,7 @@ function searchClient() {
                     <th>Phone No.</th>
                     <th>Address</th>
                 </tr>`;
-                results.forEach((result, index) => {
+                results.forEach(result => {
                     const row = document.createElement('tr');
                     row.innerHTML = `<td>${result.date}</td>
                                      <td>${result.regCode}</td>
@@ -80,14 +85,7 @@ function searchClient() {
                                      <td>${result.gender}</td>
                                      <td>${result.phoneNo}</td>
                                      <td>${result.address}</td>`;
-                    row.style.opacity = '0';
-                    row.style.transform = 'translateY(20px)';
                     table.appendChild(row);
-                    setTimeout(() => {
-                        row.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                        row.style.opacity = '1';
-                        row.style.transform = 'translateY(0)';
-                    }, 50 * index);
                 });
                 resultsContainer.appendChild(table);
             } else {
@@ -96,14 +94,36 @@ function searchClient() {
             loadingElement.classList.add('hidden');
         }, 500);
     } else {
-        resultsContainer.innerHTML = '<p>Please enter a client name, reg code, or father\'s name</p>';
+        resultsContainer.innerHTML = '<p>Please enter a registration code, client name, or father\'s name</p>';
     }
 }
 
-document.getElementById('search-input').addEventListener('keypress', function (e) {
+function clearInputs() {
+    document.getElementById('reg-code-input').value = '';
+    document.getElementById('client-name-input').value = '';
+    document.getElementById('father-name-input').value = '';
+    document.getElementById('results').innerHTML = '';
+}
+
+document.getElementById('reg-code-input').addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
         searchClient();
     }
 });
+
+document.getElementById('client-name-input').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        searchClient();
+    }
+});
+
+document.getElementById('father-name-input').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        searchClient();
+    }
+});
+
+document.getElementById('search-button').addEventListener('click', searchClient);
+document.getElementById('clear-button').addEventListener('click', clearInputs);
 
 window.addEventListener('load', loadClientData);
