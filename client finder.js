@@ -15,7 +15,7 @@ async function loadClientData() {
         }
         const data = await response.json();
         const rows = data.values;
-        if (!rows) {
+        if (!rows || rows.length === 0) {
             throw new Error("No data found in the specified range");
         }
         CLIENT_DATA = rows.slice(1).map(row => ({
@@ -33,6 +33,7 @@ async function loadClientData() {
     } catch (error) {
         console.error("Error fetching data from Google Sheets:", error);
         CLIENT_DATA = [];
+        alert("Error loading client data. Please try again later.");
     } finally {
         loadingElement.classList.add('hidden');
     }
@@ -46,24 +47,23 @@ function searchClient() {
     const loadingElement = document.getElementById('loading');
 
     resultsContainer.innerHTML = '';
-    
-    if (regCodeInput || clientNameInput || fatherNameInput) {
-        loadingElement.classList.remove('hidden');
+    loadingElement.classList.remove('hidden');
 
-        setTimeout(() => {
-            const results = CLIENT_DATA.filter(client => {
-                const regCodeMatch = regCodeInput && client.regCode.toLowerCase().includes(regCodeInput);
-                const nameMatch = clientNameInput && client.name.toLowerCase().includes(clientNameInput);
-                const fatherNameMatch = fatherNameInput && client.fatherName.toLowerCase().includes(fatherNameInput);
-                
-                return (regCodeInput ? regCodeMatch : true) &&
-                       (clientNameInput ? nameMatch : true) &&
-                       (fatherNameInput ? fatherNameMatch : true);
-            }).sort((a, b) => new Date(b.date) - new Date(a.date));
+    const results = CLIENT_DATA.filter(client => {
+        const regCodeMatch = regCodeInput && client.regCode.toLowerCase().includes(regCodeInput);
+        const nameMatch = clientNameInput && client.name.toLowerCase().includes(clientNameInput);
+        const fatherNameMatch = fatherNameInput && client.fatherName.toLowerCase().includes(fatherNameInput);
+        
+        return (regCodeInput ? regCodeMatch : true) &&
+               (clientNameInput ? nameMatch : true) &&
+               (fatherNameInput ? fatherNameMatch : true);
+    }).sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            if (results.length > 0) {
-                const table = document.createElement('table');
-                table.innerHTML = `<tr>
+    if (results.length > 0) {
+        const table = document.createElement('table');
+        table.innerHTML = `
+            <thead>
+                <tr>
                     <th>Date</th>
                     <th>Reg. Code</th>
                     <th>Risk</th>
@@ -73,57 +73,59 @@ function searchClient() {
                     <th>Gender</th>
                     <th>Phone No.</th>
                     <th>Address</th>
-                </tr>`;
-                results.forEach(result => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `<td>${result.date}</td>
-                                     <td>${result.regCode}</td>
-                                     <td>${result.risk}</td>
-                                     <td>${result.name}</td>
-                                     <td>${result.fatherName}</td>
-                                     <td>${result.age}</td>
-                                     <td>${result.gender}</td>
-                                     <td>${result.phoneNo}</td>
-                                     <td>${result.address}</td>`;
-                    table.appendChild(row);
-                });
-                resultsContainer.appendChild(table);
-            } else {
-                resultsContainer.innerHTML = '<p>No results found</p>';
-            }
-            loadingElement.classList.add('hidden');
-        }, 500);
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        `;
+        const tbody = table.querySelector('tbody');
+        results.forEach(result => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${result.date}</td>
+                <td>${result.regCode}</td>
+                <td>${result.risk}</td>
+                <td>${result.name}</td>
+                <td>${result.fatherName}</td>
+                <td>${result.age}</td>
+                <td>${result.gender}</td>
+                <td>${result.phoneNo}</td>
+                <td>${result.address}</td>
+            `;
+            tbody.appendChild(row);
+        });
+        resultsContainer.appendChild(table);
     } else {
-        resultsContainer.innerHTML = '<p>Please enter a registration code, client name, or father\'s name</p>';
+        resultsContainer.innerHTML = '<p>No results found</p>';
     }
+    
+    loadingElement.classList.add('hidden');
 }
 
 function clearInputs() {
     document.getElementById('reg-code-input').value = '';
     document.getElementById('client-name-input').value = '';
     document.getElementById('father-name-input').value = '';
-    document.getElementById('results').innerHTML = '';
+    const resultsContainer = document.getElementById('results');
+    resultsContainer.innerHTML = '';
 }
 
-document.getElementById('reg-code-input').addEventListener('keypress', function (e) {
+function handleEnterKey(e) {
     if (e.key === 'Enter') {
+        e.preventDefault();
         searchClient();
     }
+}
+
+function addEventListeners() {
+    document.getElementById('reg-code-input').addEventListener('keypress', handleEnterKey);
+    document.getElementById('client-name-input').addEventListener('keypress', handleEnterKey);
+    document.getElementById('father-name-input').addEventListener('keypress', handleEnterKey);
+    document.getElementById('search-button').addEventListener('click', searchClient);
+    document.getElementById('clear-button').addEventListener('click', clearInputs);
+}
+
+window.addEventListener('load', () => {
+    loadClientData();
+    addEventListeners();
 });
-
-document.getElementById('client-name-input').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        searchClient();
-    }
-});
-
-document.getElementById('father-name-input').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        searchClient();
-    }
-});
-
-document.getElementById('search-button').addEventListener('click', searchClient);
-document.getElementById('clear-button').addEventListener('click', clearInputs);
-
-window.addEventListener('load', loadClientData);
