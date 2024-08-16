@@ -40,19 +40,28 @@ async function loadClientData() {
 }
 
 function searchClient() {
-    const regCodeInput = document.getElementById('reg-code-input').value.trim().toLowerCase();
-    const clientNameInput = document.getElementById('client-name-input').value.trim().toLowerCase();
-    const fatherNameInput = document.getElementById('father-name-input').value.trim().toLowerCase();
+    const regCodeInput = document.getElementById('reg-code-input').value.trim();
+    const clientNameInput = document.getElementById('client-name-input').value.trim();
+    const fatherNameInput = document.getElementById('father-name-input').value.trim();
     const resultsContainer = document.getElementById('results');
     const loadingElement = document.getElementById('loading');
 
     resultsContainer.innerHTML = '';
+    resultsContainer.classList.remove('show');
     loadingElement.classList.remove('hidden');
 
+    // Check if all inputs are empty
+    if (!regCodeInput && !clientNameInput && !fatherNameInput) {
+        loadingElement.classList.add('hidden');
+        resultsContainer.innerHTML = '<p class="error-message"><i class="fas fa-exclamation-circle"></i> Please enter at least one search criteria (Registration Code, Client Name, or Father\'s Name).</p>';
+        setTimeout(() => resultsContainer.classList.add('show'), 10);
+        return;
+    }
+
     const results = CLIENT_DATA.filter(client => {
-        const regCodeMatch = regCodeInput && client.regCode.toLowerCase().includes(regCodeInput);
-        const nameMatch = clientNameInput && client.name.toLowerCase().includes(clientNameInput);
-        const fatherNameMatch = fatherNameInput && client.fatherName.toLowerCase().includes(fatherNameInput);
+        const regCodeMatch = regCodeInput && client.regCode.toLowerCase().includes(regCodeInput.toLowerCase());
+        const nameMatch = clientNameInput && client.name.toLowerCase().includes(clientNameInput.toLowerCase());
+        const fatherNameMatch = fatherNameInput && client.fatherName.toLowerCase().includes(fatherNameInput.toLowerCase());
         
         return (regCodeInput ? regCodeMatch : true) &&
                (clientNameInput ? nameMatch : true) &&
@@ -96,10 +105,11 @@ function searchClient() {
         });
         resultsContainer.appendChild(table);
     } else {
-        resultsContainer.innerHTML = '<p>No results found</p>';
+        resultsContainer.innerHTML = '<p class="no-results"><i class="fas fa-search"></i> No results found</p>';
     }
     
     loadingElement.classList.add('hidden');
+    setTimeout(() => resultsContainer.classList.add('show'), 10);
 }
 
 function clearInputs() {
@@ -108,6 +118,7 @@ function clearInputs() {
     document.getElementById('father-name-input').value = '';
     const resultsContainer = document.getElementById('results');
     resultsContainer.innerHTML = '';
+    resultsContainer.classList.remove('show');
 }
 
 function handleEnterKey(e) {
