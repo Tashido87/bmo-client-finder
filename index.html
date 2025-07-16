@@ -4,34 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bhamo KPSC Client Finder</title>
-    <link rel="stylesheet" href="client-finder.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="login-overlay" class="show">
-        <div id="login-box">
+    <div id="login-overlay" class="login-overlay show">
+        <div class="login-box">
             <h2>Bhamo KPSC Login</h2>
             <form id="login-form">
                 <div class="input-group">
-                    <i class="fas fa-user"></i>
                     <input type="text" id="username" placeholder="Username" required>
+                    <i class="fas fa-user"></i>
                 </div>
                 <div class="input-group">
-                    <i class="fas fa-lock"></i>
                     <input type="password" id="password" placeholder="Password" required>
+                    <i class="fas fa-lock"></i>
                 </div>
-                <button type="submit">Login</button>
+                <button type="submit" class="btn-primary">Login</button>
             </form>
         </div>
     </div>
 
-    <div class="container">
-        <div class="search-box">
-            <h1>Bhamo KPSC Client Finder</h1>
-            <div class="search-container">
+    <div class="container page-transition">
+        <div class="glass-card search-section">
+            <h1 class="search-title">Bhamo KPSC Client Finder</h1>
+            <form class="search-form">
                 <div class="search-row">
                     <div class="search-input">
-                        <label for="reg-code-input">Reg. Code</label>
+                        <label for="reg-code-input">Registration Code</label>
                         <input type="text" id="reg-code-input" placeholder="Enter registration code">
                     </div>
                     <div class="search-input">
@@ -44,20 +44,36 @@
                     </div>
                 </div>
                 <div class="button-group">
-                    <button id="search-button">Search</button>
-                    <button id="clear-button">Clear</button>
+                    <button type="button" id="search-button" class="btn-primary">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                    <button type="button" id="clear-button" class="btn-secondary">
+                        <i class="fas fa-times"></i> Clear
+                    </button>
                 </div>
-            </div>
+            </form>
         </div>
-        <div id="results" class="results-container"></div>
+
         <div id="loading" class="loading hidden">
             <div class="spinner"></div>
         </div>
+
+        <div id="results" class="glass-card results-container"></div>
     </div>
-    <footer>
-        © 2024 Bhamo KPSC. Created by Dr. Aung Pyae Sone
+
+    <footer class="glass-card footer">
+        <span>© 2024 Bhamo KPSC. Created by Dr. Aung Pyae Sone</span>
+        <div class="settings-buttons">
+            <input type="file" id="background-uploader" accept="image/*" class="hidden">
+            <button id="background-upload-btn" class="icon-btn" title="Change Background">
+                <i class="fas fa-image"></i>
+            </button>
+            <button id="background-reset-btn" class="icon-btn" title="Reset Background">
+                <i class="fas fa-undo"></i>
+            </button>
+        </div>
     </footer>
-    <script src="client-finder.js"></script>
-    <script src="login.js"></script>
+
+    <script src="script.js"></script>
 </body>
 </html>
